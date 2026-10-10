@@ -22,6 +22,13 @@ export default function DashboardView({
   onQuickCheckIn,
   onNavigateTab,
 }) {
+  const formatInr = (value) =>
+    new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 2,
+    }).format(Number(value || 0));
+
   return (
     <div className="space-y-6">
       {/* Top Welcome Banner */}
@@ -85,8 +92,8 @@ export default function DashboardView({
         />
         <StatCard
           title="Monthly Revenue"
-          value={`$${(stats.monthlyRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          subtitle={`All-time: $${(stats.totalRevenue || 0).toLocaleString()}`}
+          value={formatInr(stats.monthlyRevenue)}
+          subtitle={`All-time: ${formatInr(stats.totalRevenue)}`}
           trend="+18.4%"
           icon={DollarSign}
           color="cyan"

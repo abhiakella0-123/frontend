@@ -18,7 +18,7 @@ export default function PaymentModal({ isOpen, onClose, onSave, members, plans, 
   const [formData, setFormData] = useState({
     memberId: members[0]?.id || '',
     planId: plans[0]?.id || '',
-    amount: plans[0]?.price || 49.99,
+    amount: plans[0]?.price || 0,
     paymentMethod: 'CREDIT_CARD',
     notes: 'Membership subscription payment',
   });
@@ -36,7 +36,7 @@ export default function PaymentModal({ isOpen, onClose, onSave, members, plans, 
       ...formData,
       memberId: id,
       planId: plan ? plan.id : '',
-      amount: plan ? plan.price : 49.99,
+      amount: plan ? plan.price : 0,
     });
   };
 

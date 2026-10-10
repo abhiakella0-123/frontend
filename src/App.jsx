@@ -54,6 +54,10 @@ function getTabFromPath(pathname) {
 }
 
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('gymTheme');
+    return savedTheme || 'dark';
+  });
   const [currentTab, setCurrentTabState] = useState(() => getTabFromPath(window.location.pathname));
   const [auth, setAuth] = useState(() => {
     try {
@@ -110,6 +114,12 @@ export default function App() {
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [invoiceToView, setInvoiceToView] = useState(null);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    localStorage.setItem('gymTheme', theme);
+  }, [theme]);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -551,27 +561,35 @@ export default function App() {
 
   if (auth.role === 'user') {
     return (
-      <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+      <div className={`flex h-screen ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'} overflow-hidden font-sans`}>
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <header className="h-18 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-8 flex items-center justify-between sticky top-0 z-30">
+          <header className={`h-18 ${theme === 'dark' ? 'bg-slate-900/80 border-slate-800' : 'bg-white/90 border-slate-200'} backdrop-blur-md border-b px-8 flex items-center justify-between sticky top-0 z-30`}>
             <div className="flex items-center space-x-4">
               <div>
-                <h2 className="text-xl font-bold text-white tracking-tight">Member Portal</h2>
-                <p className="text-xs text-slate-400">Apex Fitness Club &bull; Personal dashboard</p>
+                <h2 className={`text-xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Member Portal</h2>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>Apex Fitness Club &bull; Personal dashboard</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <button
+                type="button"
+                onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+                className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${theme === 'dark' ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700' : 'border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+              >
+                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              </button>
+              <button
+                type="button"
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition shadow-sm active:scale-95"
+                className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition shadow-sm active:scale-95 ${theme === 'dark' ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'}`}
               >
                 <span>Logout</span>
               </button>
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+          <main className={`flex-1 overflow-y-auto p-6 lg:p-8 ${theme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
             <UserPortalView
               key={userMember?.id}
               member={userMember}
@@ -594,7 +612,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className={`flex h-screen ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'} overflow-hidden font-sans`}>
       {/* Toast Alert */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300">
@@ -611,7 +629,7 @@ export default function App() {
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             )}
             <span>{toast.message}</span>
-            <button onClick={() => setToast(null)} className="ml-2 hover:opacity-80">
+            <button type="button" onClick={() => setToast(null)} className="ml-2 hover:opacity-80">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -638,13 +656,15 @@ export default function App() {
             setIsMemberModalOpen(true);
           }}
           onLogout={handleLogout}
+          theme={theme}
+          onToggleTheme={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
         />
 
         {/* View Container */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className={`flex-1 overflow-y-auto p-6 lg:p-8 ${theme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
           {loading ? (
             <div className="h-full flex items-center justify-center">
-              <div className="flex flex-col items-center gap-3 text-slate-400 text-xs">
+              <div className={`flex flex-col items-center gap-3 text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                 <div className="w-8 h-8 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
                 <span>Loading Titan Fit Management Suite...</span>
               </div>
